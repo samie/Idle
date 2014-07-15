@@ -1,4 +1,4 @@
-package org.vaadin.addons.useractivitytracker;
+package org.vaadin.addons.idle;
 
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.server.AbstractJavaScriptExtension;
@@ -10,7 +10,7 @@ import org.json.JSONException;
 /**
  * Vaadin extension for tracking user activity / inactivity.
  *
- * Track user inactivity changes. There are two ways to react to user
+ * Track user activity/inactivity changes. There are two ways to react to user
  * inactivity: Change the CSS styles or receive notification when user becomes
  * inactive. Both can be used at the same time.
  *
@@ -24,14 +24,14 @@ import org.json.JSONException;
  * User activity is tracked by following the mouse and keyboard events on the
  * browser window.
  *
- * The inactivity timeout can be specified using the setTimeout method.
+ * The inactivity timeout period can be specified using the setTimeout method.
  *
  * @author Sami Ekblad
  */
-@JavaScript("useractivitytracker.js")
-public class UserActivityTracker extends AbstractJavaScriptExtension {
+@JavaScript("idle.js")
+public class Idle extends AbstractJavaScriptExtension {
 
-    private static final long DEFAULT_INACTIVITY_TIMEOUT_MS = 4000;
+    private static final long DEFAULT_INACTIVITY_TIMEOUT_MS = 5000;
 
     private long timeout = DEFAULT_INACTIVITY_TIMEOUT_MS;
 
@@ -45,14 +45,14 @@ public class UserActivityTracker extends AbstractJavaScriptExtension {
         /**
          * Invoked when user goes inactive based on timeout period.
          *
-         * @see UserActivityTracker#setTimeout(long)
+         * @see Idle#setTimeout(long)
          */
         public void userInactive();
 
         /**
          * Invoked when user becomes active.
          *
-         * @see UserActivityTracker#setTimeout(long)
+         * @see Idle#setTimeout(long)
          */
         public void userActive();
     }
@@ -61,44 +61,55 @@ public class UserActivityTracker extends AbstractJavaScriptExtension {
      * Create new user activity tracker for UI with default timeout and no
      * server-side listener.
      *
-     * @param ui
-     * @return UserActivityTracker
+     * @param ui UI instance to monitor
+     * @return Idle Created instance
      */
-    public static UserActivityTracker track(final UI ui) {
-        return new UserActivityTracker(ui);
+    public static Idle track(final UI ui) {
+        return new Idle(ui);
     }
 
     /**
+     * Create new user activity tracker for UI with timeout.
+     *
+     * @param ui UI instance to monitor
+     * @param timeoutMs Inactivity timeout in milliseconds
+     * @return Idle Created instance
+     */
+    public static Idle track(final UI ui, final long timeoutMs) {
+        return new Idle(ui, timeoutMs, null);
+    }    
+    
+    /**
      * Create new user activity tracker for UI with timeout and a listener.
      *
-     * @param ui
-     * @param timeoutMs
-     * @param listener
-     * @return UserActivityTracker
+     * @param ui UI instance to monitor
+     * @param timeoutMs Inactivity timeout in milliseconds
+     * @param listener Listener that receives the events
+     * @return Idle Created instance
      */
-    public static UserActivityTracker track(final UI ui, final long timeoutMs, final Listener listener) {
-        return new UserActivityTracker(ui, timeoutMs, listener);
+    public static Idle track(final UI ui, final long timeoutMs, final Listener listener) {
+        return new Idle(ui, timeoutMs, listener);
     }
 
-    private UserActivityTracker(final UI ui) {
+    private Idle(final UI ui) {
         this(ui, DEFAULT_INACTIVITY_TIMEOUT_MS, null);
     }
 
-    private UserActivityTracker(final UI ui, final long timeoutMs, final Listener listener) {
+    private Idle(final UI ui, final long timeoutMs, final Listener listener) {
         extend(ui);
         addFunction("onUserInactive", new JavaScriptFunction() {
             @Override
             public void call(JSONArray arguments) throws JSONException {
-                if (UserActivityTracker.this.listener != null) {
-                    UserActivityTracker.this.listener.userInactive();
+                if (Idle.this.listener != null) {
+                    Idle.this.listener.userInactive();
                 }
             }
         });
         addFunction("onUserActive", new JavaScriptFunction() {
             @Override
             public void call(JSONArray arguments) throws JSONException {
-                if (UserActivityTracker.this.listener != null) {
-                    UserActivityTracker.this.listener.userActive();
+                if (Idle.this.listener != null) {
+                    Idle.this.listener.userActive();
                 }
             }
         });
@@ -119,7 +130,7 @@ public class UserActivityTracker extends AbstractJavaScriptExtension {
      * User inactivity timeout in seconds.
      *
      * This is the time that needs to pass before user is considered inactive.
-     * Default timeout is 4000ms (4 seconds).
+     * Default timeout is 5000ms (5 seconds).
      *
      * @param timeout New timeout.
      */
@@ -134,7 +145,7 @@ public class UserActivityTracker extends AbstractJavaScriptExtension {
     /**
      * Listener for user inactivity status changes.
      *
-     * @return
+     * @return Listener instance or null.
      */
     public Listener getListener() {
         return listener;

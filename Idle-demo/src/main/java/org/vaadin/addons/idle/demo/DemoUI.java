@@ -1,6 +1,6 @@
-package org.vaadin.addons.useractivitytracker.demo;
+package org.vaadin.addons.idle.demo;
 
-import org.vaadin.addons.useractivitytracker.UserActivityTracker;
+import org.vaadin.addons.idle.Idle;
 
 import javax.servlet.annotation.WebServlet;
 
@@ -15,11 +15,10 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 @Theme("demo")
-@Title("UserActivityTracker Add-on Demo")
+@Title("Idle Add-on Demo")
 @SuppressWarnings("serial")
 public class DemoUI extends UI {
 
-    private UserActivityTracker userTracker;
     private Label status;
 
     @WebServlet(value = "/*", asyncSupported = true)
@@ -35,7 +34,7 @@ public class DemoUI extends UI {
         status.setStyleName("status");
 
         // Initialize our new UI component
-        userTracker = UserActivityTracker.track(this, 5000, new UserActivityTracker.Listener() {
+        Idle.track(this, 5000, new Idle.Listener() {
 
             @Override
             public void userInactive() {
