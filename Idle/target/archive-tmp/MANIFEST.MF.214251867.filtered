@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Vaadin-Package-Version: 1
-Vaadin-Addon: idle-1.0.0.jar
-Vaadin-License-Title: Apache License 2.0
-Implementation-Vendor: Sami Ekblad
-Implementation-Title: Idle
-Implementation-Version: 1.0.0
