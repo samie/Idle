@@ -164,5 +164,15 @@ public class Idle extends AbstractJavaScriptExtension {
         this.listener = listener;
         getState().enabled = this.listener != null;
     }
+    
+    @Override
+    public void beforeClientResponse(boolean initial) {
+        if (initial) {
+            // Set the timeout on client side when the connector get created.
+            // This is necessary when the UI is preserved on refresh.
+            callFunction("setInactivityTimeout", this.timeout);
+        }
+        super.beforeClientResponse(initial);
+    }
 
 }
