@@ -1,10 +1,10 @@
-package org.vaadin.addons.useractivitytracker;
+package org.vaadin.addons.idle;
 
 import junit.framework.Assert;
 import org.junit.Test;
 
 // JUnit tests here
-public class UserActivityTrackerTest {
+public class IdleTest {
 
 	@Test
 	public void thisAlwaysPasses() {
