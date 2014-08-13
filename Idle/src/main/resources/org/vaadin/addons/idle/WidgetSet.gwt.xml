@@ -6,6 +6,6 @@
 	<inherits name="com.vaadin.DefaultWidgetSet" /> 
 
 	<!-- Widget styles in public -directory -->
-	<stylesheet src="UserActivityTracker/styles.css"/>
+	<stylesheet src="Idle/styles.css"/>
 
 </module>

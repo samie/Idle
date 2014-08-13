@@ -6,6 +6,7 @@ import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.UI;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.vaadin.addons.idle.client.IdleState;
 
 /**
  * Vaadin extension for tracking user activity / inactivity.
@@ -32,8 +33,6 @@ import org.json.JSONException;
 public class Idle extends AbstractJavaScriptExtension {
 
     private static final long DEFAULT_INACTIVITY_TIMEOUT_MS = 5000;
-
-    private long timeout = DEFAULT_INACTIVITY_TIMEOUT_MS;
 
     private Listener listener;
 
@@ -118,16 +117,16 @@ public class Idle extends AbstractJavaScriptExtension {
     }
 
     /**
-     * User inactivity timeout in seconds.
+     * User inactivity timeout in milliseconds.
      *
      * @return Current timeout in milliseconds.
      */
     public long getTimeout() {
-        return timeout;
+        return getState().timeout;
     }
 
     /**
-     * User inactivity timeout in seconds.
+     * User inactivity timeout in milliseconds.
      *
      * This is the time that needs to pass before user is considered inactive.
      * Default timeout is 5000ms (5 seconds).
@@ -135,11 +134,7 @@ public class Idle extends AbstractJavaScriptExtension {
      * @param timeout New timeout.
      */
     public void setTimeout(long timeout) {
-        this.timeout = timeout;
-        if (this.timeout < 0) {
-            this.timeout = 0;
-        }
-        callFunction("setInactivityTimeout", this.timeout);
+        getState().timeout = timeout;
     }
 
     /**
@@ -165,4 +160,9 @@ public class Idle extends AbstractJavaScriptExtension {
         getState().enabled = this.listener != null;
     }
 
+    @Override
+    protected IdleState getState() {
+        return (IdleState) super.getState();
+    }
+    
 }
