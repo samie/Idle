@@ -2,7 +2,7 @@ window.org_vaadin_addons_idle_Idle = function() {
 
     var self = this;
     this.timer = null;
-    this.timeout = 5000;
+    this.timeout = self.getState().timeout;
 
     this.addEvent = function(ob, type, fn) {
         if (ob.addEventListener) {
@@ -16,7 +16,7 @@ window.org_vaadin_addons_idle_Idle = function() {
                     return function() {
                         f1.apply(this, arguments);
                         f2.apply(this, arguments);
-                    }
+                    };
                 })(ob[type], fn);
             }
             ob[type] = fn;
@@ -24,7 +24,6 @@ window.org_vaadin_addons_idle_Idle = function() {
         }
         return false;
     };
-
 
     this.timerReset = function() {
         if (self.timer) {
@@ -47,21 +46,25 @@ window.org_vaadin_addons_idle_Idle = function() {
         }, self.timeout);
 
     };
-
-    this.setInactivityTimeout = function(timeoutMs) {
-        self.timeout = timeoutMs;
-        self.timerReset();
+    
+    this.onStateChange = function() {
+        var newTimeout = self.getState().timeout;
+        // Reset timer if timeout has changed
+        if (newTimeout !== self.timeout) {
+            self.timeout = newTimeout;
+            self.timerReset();
+        }
     };
-
-
 
     if (document.body.className.indexOf("useractive") < 0) {
         document.body.className += " useractive";
     }
+    
+    // Initially start the timer
+    this.timerReset();
 
     self.addEvent(window, 'mousedown', self.timerReset);
     self.addEvent(window, 'mousemove', self.timerReset);
     self.addEvent(window, 'keydown', self.timerReset);
 
-
-}
+};
