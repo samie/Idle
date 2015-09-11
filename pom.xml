@@ -1,16 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.vaadin.addon</groupId>
-	<artifactId>Idle-root</artifactId>
-	<packaging>pom</packaging>
-	<version>1.0.1</version>
-	<name>Idle - Root Project</name>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.vaadin.addon</groupId>
+    <artifactId>idle-root</artifactId>
+    <packaging>pom</packaging>
+    <version>1.1.0</version>
+    <name>Idle - Root Project</name>
 
-	<modules>
-		<module>Idle</module>
-		<module>Idle-demo</module>
-	</modules>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <vaadin.version>7.5.5</vaadin.version>
+        <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
+    </properties>
+
+    <organization>
+        <name>Sami Ekblad</name>
+        <url>https://github.com/samie/Idle/</url>
+    </organization>
+    
+    <scm>
+        <url>git://github.com/samie/Idle.git</url>
+        <connection>scm:git:git://github.com/samie/Idle.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:/samie/Idle.git</developerConnection>
+        <tag>Idle add-on for Vaadin</tag>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/samie/Idle/issues</url>
+    </issueManagement>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <modules>
+        <module>Idle</module>
+        <module>Idle-demo</module>
+    </modules>
 
 </project>

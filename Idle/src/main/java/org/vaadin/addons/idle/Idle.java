@@ -4,8 +4,7 @@ import com.vaadin.annotations.JavaScript;
 import com.vaadin.server.AbstractJavaScriptExtension;
 import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.UI;
-import org.json.JSONArray;
-import org.json.JSONException;
+import elemental.json.JsonArray;
 import org.vaadin.addons.idle.client.IdleState;
 
 /**
@@ -98,7 +97,7 @@ public class Idle extends AbstractJavaScriptExtension {
         extend(ui);
         addFunction("onUserInactive", new JavaScriptFunction() {
             @Override
-            public void call(JSONArray arguments) throws JSONException {
+            public void call(JsonArray arguments) {
                 if (Idle.this.listener != null) {
                     Idle.this.listener.userInactive();
                 }
@@ -106,7 +105,7 @@ public class Idle extends AbstractJavaScriptExtension {
         });
         addFunction("onUserActive", new JavaScriptFunction() {
             @Override
-            public void call(JSONArray arguments) throws JSONException {
+            public void call(JsonArray arguments) {
                 if (Idle.this.listener != null) {
                     Idle.this.listener.userActive();
                 }
