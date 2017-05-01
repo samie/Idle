@@ -2,7 +2,7 @@ window.org_vaadin_addons_idle_Idle = function() {
 
     var self = this;
     this.timer = null;
-    this.timeout = self.getState().timeout;
+    this.timeout = null;
 
     this.addEvent = function(ob, type, fn) {
         if (ob.addEventListener) {
@@ -30,7 +30,7 @@ window.org_vaadin_addons_idle_Idle = function() {
             clearTimeout(self.timer);
             if (document.body.className.indexOf("userinactive") >= 0) {
                 document.body.className = document.body.className.replace("userinactive", "useractive");
-                if (self.getState().enabled) {
+                if (self.getState().active) {
                     self.onUserActive();
                 }
             }
@@ -39,7 +39,7 @@ window.org_vaadin_addons_idle_Idle = function() {
         self.timer = setTimeout(function() {
             if (document.body.className.indexOf("useractive") >= 0) {
                 document.body.className = document.body.className.replace("useractive", "userinactive");
-                if (self.getState().enabled) {
+                if (self.getState().active) {
                     self.onUserInactive();
                 }
             }
@@ -59,9 +59,6 @@ window.org_vaadin_addons_idle_Idle = function() {
     if (document.body.className.indexOf("useractive") < 0) {
         document.body.className += " useractive";
     }
-    
-    // Initially start the timer
-    this.timerReset();
 
     self.addEvent(window, 'mousedown', self.timerReset);
     self.addEvent(window, 'mousemove', self.timerReset);

@@ -2,9 +2,7 @@ package org.vaadin.addons.idle;
 
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.server.AbstractJavaScriptExtension;
-import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.UI;
-import elemental.json.JsonArray;
 import org.vaadin.addons.idle.client.IdleState;
 
 /**
@@ -95,20 +93,14 @@ public class Idle extends AbstractJavaScriptExtension {
 
     private Idle(final UI ui, final long timeoutMs, final Listener listener) {
         extend(ui);
-        addFunction("onUserInactive", new JavaScriptFunction() {
-            @Override
-            public void call(JsonArray arguments) {
-                if (Idle.this.listener != null) {
-                    Idle.this.listener.userInactive();
-                }
+        addFunction("onUserInactive", args -> {
+            if (this.listener != null) {
+                this.listener.userInactive();
             }
         });
-        addFunction("onUserActive", new JavaScriptFunction() {
-            @Override
-            public void call(JsonArray arguments) {
-                if (Idle.this.listener != null) {
-                    Idle.this.listener.userActive();
-                }
+        addFunction("onUserActive", args -> {
+            if (this.listener != null) {
+                this.listener.userActive();
             }
         });
         setListener(listener);
@@ -156,7 +148,7 @@ public class Idle extends AbstractJavaScriptExtension {
      */
     public void setListener(Listener listener) {
         this.listener = listener;
-        getState().enabled = this.listener != null;
+        getState().active = this.listener != null;
     }
 
     @Override

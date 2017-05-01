@@ -4,7 +4,6 @@ import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.data.Property;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Alignment;
@@ -27,7 +26,7 @@ import org.vaadin.addons.idle.Idle;
 public class DemoUI extends UI {
     
     // Some test timeouts
-    private final TreeSet<Long> timeouts = new TreeSet<Long>(); {
+    private final TreeSet<Long> timeouts = new TreeSet<>(); {
         timeouts.add(3000L); // 3 seconds
         timeouts.add(10000L); // 10 seconds
         timeouts.add(30000L); // 30 seconds
@@ -74,34 +73,27 @@ public class DemoUI extends UI {
         timeouts.add(idle.getTimeout());
         
         // Combobox to change the inactivity timeout
-        final ComboBox timeoutComboBox = new ComboBox(
+        ComboBox<Long> timeoutComboBox = new ComboBox<>(
                 "Inactivity timeout:", timeouts);
         timeoutComboBox.setWidth(250, Unit.PIXELS);
         timeoutComboBox.setValue(idle.getTimeout());
-        timeoutComboBox.setNullSelectionAllowed(false);
-        timeoutComboBox.addValueChangeListener(
-                new Property.ValueChangeListener() {
-
-            @Override
-            public void valueChange(Property.ValueChangeEvent event) {
-                Long timeout = (Long) timeoutComboBox.getValue();
-                Notification.show("Inactivity timeout is now set to:\n" + 
-                            timeout + " ms!", "", 
-                            Notification.Type.TRAY_NOTIFICATION);
-                idle.setTimeout(timeout);
-            }
+        timeoutComboBox.setEmptySelectionAllowed(false);
+        timeoutComboBox.addValueChangeListener(e -> {
+            Long timeout = timeoutComboBox.getValue();
+            Notification.show("Inactivity timeout is now set to:\n" + 
+                        timeout + " ms!", "", 
+                        Notification.Type.TRAY_NOTIFICATION);
+            idle.setTimeout(timeout);
         });
         
-        for (Long timeout : timeouts) {
-            timeoutComboBox.setItemCaption(timeout, timeout + " ms");
-        }
+        timeoutComboBox.setItemCaptionGenerator(timeout -> timeout + " ms");
         
         wrapperLayout.addComponent(timeoutComboBox);
         wrapperLayout.setComponentAlignment(
                 timeoutComboBox, Alignment.MIDDLE_CENTER);
         
         // Show it in the middle of the screen
-        final VerticalLayout layout = new VerticalLayout();
+        VerticalLayout layout = new VerticalLayout();
         layout.setSizeFull();
         layout.addComponent(wrapperLayout);
         layout.setComponentAlignment(wrapperLayout, Alignment.MIDDLE_CENTER);

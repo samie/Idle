@@ -31,4 +31,9 @@ public class IdleState extends JavaScriptExtensionState {
      */
     public long timeout = 5000;
     
+    /**
+     * Fire server callbacks.
+     */
+    public boolean active = true;
+    
 }
