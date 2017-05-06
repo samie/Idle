@@ -45,7 +45,6 @@ public class DemoUI extends UI {
     @Override
     protected void init(VaadinRequest request) {
         
-        
         VerticalLayout wrapperLayout = new VerticalLayout();
         wrapperLayout.setSizeUndefined();
         wrapperLayout.setSpacing(true);
@@ -58,18 +57,9 @@ public class DemoUI extends UI {
         wrapperLayout.setComponentAlignment(status, Alignment.MIDDLE_CENTER);
 
         // Initialize our new UI component
-        final Idle idle = Idle.track(this, 5000, new Idle.Listener() {
-
-            @Override
-            public void userInactive() {
-                status.setValue("You are now idle");
-            }
-
-            @Override
-            public void userActive() {
-                status.setValue("You are now active");
-            }
-        });
+        Idle idle = Idle.track(this, 5000);
+        idle.addUserActiveListener(e -> status.setValue("You are now active"));
+        idle.addUserInactiveListener(e -> status.setValue("You are now idle"));
         timeouts.add(idle.getTimeout());
         
         // Combobox to change the inactivity timeout
@@ -79,7 +69,7 @@ public class DemoUI extends UI {
         timeoutComboBox.setValue(idle.getTimeout());
         timeoutComboBox.setEmptySelectionAllowed(false);
         timeoutComboBox.addValueChangeListener(e -> {
-            Long timeout = timeoutComboBox.getValue();
+            Long timeout = e.getValue();
             Notification.show("Inactivity timeout is now set to:\n" + 
                         timeout + " ms!", "", 
                         Notification.Type.TRAY_NOTIFICATION);
