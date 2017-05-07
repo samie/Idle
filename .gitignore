@@ -9,8 +9,10 @@
 *.ear
 
 Idle/target/
+Idle/drivers/
 Idle-demo/target/
 Idle-demo/src/main/webapp/META-INF/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/Idle/phantomjsdriver.log
