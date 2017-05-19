@@ -1,13 +1,30 @@
+/*
+ * Copyright 2017 Sami Ekblad.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.vaadin.addons.idle;
 
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.server.AbstractJavaScriptExtension;
+import com.vaadin.server.Extension;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.UI;
 import com.vaadin.util.ReflectTools;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.EventObject;
+import java.util.Objects;
 import org.vaadin.addons.idle.client.IdleState;
 
 /**
@@ -136,6 +153,23 @@ public class Idle extends AbstractJavaScriptExtension {
         }
     
     }
+    
+    /**
+     * Gets the Idle instance a monitored UI.
+     * 
+     * @param ui A monitored UI instance
+     * @return Idle instance of the UI or {@code null}, if the UI is not
+     * monitored.
+     */
+    public static Idle get(UI ui) {
+        Objects.requireNonNull(ui, "UI must not be null");
+        for (Extension extension : ui.getExtensions()) {
+            if (extension instanceof Idle) {
+                return (Idle) extension;
+            }
+        }
+        return null;
+    }
 
     /**
      * Create new user activity tracker for UI with default timeout and no
@@ -143,8 +177,9 @@ public class Idle extends AbstractJavaScriptExtension {
      *
      * @param ui UI instance to monitor
      * @return Idle Created instance
+     * @throws IllegalArgumentException If the UI is already monitored by Idle
      */
-    public static Idle track(UI ui) {
+    public static Idle track(UI ui) throws IllegalArgumentException {
         return new Idle(ui);
     }
 
@@ -154,20 +189,49 @@ public class Idle extends AbstractJavaScriptExtension {
      * @param ui UI instance to monitor
      * @param timeoutMs Inactivity timeout in milliseconds
      * @return Idle Created instance
+     * @throws IllegalArgumentException If the UI is already monitored by Idle
      */
-    public static Idle track(UI ui, long timeoutMs) {
+    public static Idle track(UI ui, long timeoutMs)
+            throws IllegalArgumentException {
         return new Idle(ui, timeoutMs);
     }
-
-    protected Idle(UI ui) {
+    
+    /**
+     * Creates a new Idle instance.
+     * 
+     * @param ui UI instance to monitor
+     * @throws IllegalArgumentException If the UI is already monitored by Idle
+     */
+    protected Idle(UI ui) throws IllegalArgumentException {
+        checkNotTracked(ui);
         extend(ui);
         addFunction("onUserInactive", args -> fireUserInactive());
         addFunction("onUserActive", args -> fireUserActive());
     }
 
-    protected Idle(UI ui, long timeoutMs) {
+    /**
+     * Creates a new Idle instance.
+     * 
+     * @param ui UI instance to monitor
+     * @param timeoutMs Inactivity timeout in milliseconds
+     * @throws IllegalArgumentException If the UI is already monitored by Idle
+     */
+    protected Idle(UI ui, long timeoutMs) throws IllegalArgumentException {
         this(ui);
         setTimeout(timeoutMs);
+    }
+    
+    /**
+     * Checks if the given UI is already monitored by Idle.
+     * 
+     * @param ui UI instance to check
+     * @throws IllegalArgumentException If the UI is already monitored by Idle
+     */
+    protected void checkNotTracked(UI ui) throws IllegalArgumentException {
+        if (Idle.get(ui) != null) {
+            throw new IllegalArgumentException(
+                    "This UI is already monitored by Idle");
+        }
     }
 
     /**

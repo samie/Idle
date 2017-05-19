@@ -17,11 +17,7 @@ package org.vaadin.addons.idle.automated;
 
 import com.github.webdriverextensions.WebDriverExtensionsContext;
 import com.github.webdriverextensions.junitrunner.WebDriverRunner;
-import com.github.webdriverextensions.junitrunner.annotations.Chrome;
-import com.github.webdriverextensions.junitrunner.annotations.Edge;
-import com.github.webdriverextensions.junitrunner.annotations.InternetExplorer;
 import com.github.webdriverextensions.junitrunner.annotations.PhantomJS;
-import com.github.webdriverextensions.junitrunner.annotations.Safari;
 import com.github.webdriverextensions.vaadin.VaadinBot;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -40,11 +36,6 @@ import org.vaadin.addons.idle.manual.demo.IdleDemo;
  */
 @RunWith(WebDriverRunner.class)
 @PhantomJS
-@Chrome
-// @Firefox // driver does not work
-@Safari
-@InternetExplorer
-@Edge
 public class TestIdleDemo extends AbstractWebDriverCase {
     
     IdleDemoPage page;
