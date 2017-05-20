@@ -12,7 +12,9 @@ Idle/target/
 Idle/drivers/
 Idle-demo/target/
 Idle-demo/src/main/webapp/META-INF/
+Idle-demo/src/main/webapp/VAADIN/themes/demo/styles.css
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 /Idle/phantomjsdriver.log
+/Idle-demo/src/main/webapp/VAADIN/themes/demo/addons.scss
