@@ -1,3 +1,6 @@
+[![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/idle)
+[![Stars on Vaadin Directory](https://img.shields.io/vaadin-directory/star/idle.svg)](https://vaadin.com/directory/component/idle)
+
 # Idle - User inactivity tracking for Vaadin
 
 With *Idle* you can monitor, if user is active or inactive in your application. 
