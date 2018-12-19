@@ -1,10 +1,30 @@
+/*
+ * Copyright 2017 Sami Ekblad.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.vaadin.addons.idle;
 
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.server.AbstractJavaScriptExtension;
-import com.vaadin.ui.JavaScriptFunction;
+import com.vaadin.server.Extension;
+import com.vaadin.shared.Registration;
 import com.vaadin.ui.UI;
-import elemental.json.JsonArray;
+import com.vaadin.util.ReflectTools;
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.EventObject;
+import java.util.Objects;
 import org.vaadin.addons.idle.client.IdleState;
 
 /**
@@ -18,41 +38,137 @@ import org.vaadin.addons.idle.client.IdleState;
  * to <code>BODY</code> element. When user comes back active this style is
  * replaced with classname <code>useractive</code>.
  *
- * Furthermore, if a non-null listener is given with setListner, it will be
- * invoked.
+ * Furthermore, if listeners have been attached using
+ * {@link #addUserActiveListener} and {@link #addUserInactiveListener}, they
+ * will be invoked.
  *
  * User activity is tracked by following the mouse and keyboard events on the
  * browser window.
  *
- * The inactivity timeout period can be specified using the setTimeout method.
+ * The inactivity timeout period can be specified using the
+ * {@link #setTimeout(long)} method.
  *
  * @author Sami Ekblad
  */
 @JavaScript("idle.js")
 public class Idle extends AbstractJavaScriptExtension {
 
-    private static final long DEFAULT_INACTIVITY_TIMEOUT_MS = 5000;
-
-    private Listener listener;
-
     /**
-     * Listener interface for user inactivity status changes.
+     * Basic Idle add-on event
      */
-    public interface Listener {
+    public static class IdleEvent extends EventObject {
+    
+        /**
+         * New instance of idle event.
+         * 
+         * @param idle The source of the event.
+         */
+        public IdleEvent(Idle idle) {
+            super(idle);
+        }
 
         /**
-         * Invoked when user goes inactive based on timeout period.
-         *
-         * @see Idle#setTimeout(long)
+         * Gets the Idle instance that triggered this event.
+         * 
+         * @return Idle instance that triggered this event.
          */
-        public void userInactive();
-
+        public Idle getIdle() {
+            return (Idle) getSource();
+        }
+    
+    }
+    
+    /**
+     * Listener interface for user activity status changes to active.
+     */
+    @FunctionalInterface
+    public interface UserActiveListener extends Serializable {
+        
+        public static final Method USER_ACTIVE_METHOD
+                = ReflectTools.findMethod(UserActiveListener.class,
+                        "userActive", UserActiveEvent.class);
+        
         /**
          * Invoked when user becomes active.
          *
+         * @param event Event
          * @see Idle#setTimeout(long)
          */
-        public void userActive();
+        public void userActive(UserActiveEvent event);
+        
+    }
+    
+    /**
+     * User active event.
+     * 
+     * This event is triggered when the user becomes active.
+     */
+    public static class UserActiveEvent extends IdleEvent {
+    
+        /**
+         * New instance of user active event.
+         * 
+         * @param idle The source of the event.
+         */
+        public UserActiveEvent(Idle idle) {
+            super(idle);
+        }
+    
+    }
+    
+    /**
+     * Listener interface for user activity status changes to inactive.
+     */
+    @FunctionalInterface
+    public interface UserInactiveListener extends Serializable {
+        
+        public static final Method USER_INACTIVE_METHOD
+                = ReflectTools.findMethod(UserInactiveListener.class,
+                        "userInactive", UserInactiveEvent.class);
+        
+        /**
+         * Invoked when user goes inactive based on timeout period.
+         *
+         * @param event Event
+         * @see Idle#setTimeout(long)
+         */
+        public void userInactive(UserInactiveEvent event);
+        
+    }
+    
+    /**
+     * User inactive event.
+     * 
+     * This event is triggered when the user becomes inactive.
+     */
+    public static class UserInactiveEvent extends IdleEvent {
+    
+        /**
+         * New instance of user inactive event.
+         * 
+         * @param idle The source of the event.
+         */
+        public UserInactiveEvent(Idle idle) {
+            super(idle);
+        }
+    
+    }
+    
+    /**
+     * Gets the Idle instance a monitored UI.
+     * 
+     * @param ui A monitored UI instance
+     * @return Idle instance of the UI or {@code null}, if the UI is not
+     * monitored.
+     */
+    public static Idle get(UI ui) {
+        Objects.requireNonNull(ui, "UI must not be null");
+        for (Extension extension : ui.getExtensions()) {
+            if (extension instanceof Idle) {
+                return (Idle) extension;
+            }
+        }
+        return null;
     }
 
     /**
@@ -61,8 +177,9 @@ public class Idle extends AbstractJavaScriptExtension {
      *
      * @param ui UI instance to monitor
      * @return Idle Created instance
+     * @throws IllegalArgumentException If the UI is already monitored by Idle
      */
-    public static Idle track(final UI ui) {
+    public static Idle track(UI ui) throws IllegalArgumentException {
         return new Idle(ui);
     }
 
@@ -72,47 +189,49 @@ public class Idle extends AbstractJavaScriptExtension {
      * @param ui UI instance to monitor
      * @param timeoutMs Inactivity timeout in milliseconds
      * @return Idle Created instance
+     * @throws IllegalArgumentException If the UI is already monitored by Idle
      */
-    public static Idle track(final UI ui, final long timeoutMs) {
-        return new Idle(ui, timeoutMs, null);
-    }    
+    public static Idle track(UI ui, long timeoutMs)
+            throws IllegalArgumentException {
+        return new Idle(ui, timeoutMs);
+    }
     
     /**
-     * Create new user activity tracker for UI with timeout and a listener.
-     *
+     * Creates a new Idle instance.
+     * 
+     * @param ui UI instance to monitor
+     * @throws IllegalArgumentException If the UI is already monitored by Idle
+     */
+    protected Idle(UI ui) throws IllegalArgumentException {
+        checkNotTracked(ui);
+        extend(ui);
+        addFunction("onUserInactive", args -> fireUserInactive());
+        addFunction("onUserActive", args -> fireUserActive());
+    }
+
+    /**
+     * Creates a new Idle instance.
+     * 
      * @param ui UI instance to monitor
      * @param timeoutMs Inactivity timeout in milliseconds
-     * @param listener Listener that receives the events
-     * @return Idle Created instance
+     * @throws IllegalArgumentException If the UI is already monitored by Idle
      */
-    public static Idle track(final UI ui, final long timeoutMs, final Listener listener) {
-        return new Idle(ui, timeoutMs, listener);
-    }
-
-    private Idle(final UI ui) {
-        this(ui, DEFAULT_INACTIVITY_TIMEOUT_MS, null);
-    }
-
-    private Idle(final UI ui, final long timeoutMs, final Listener listener) {
-        extend(ui);
-        addFunction("onUserInactive", new JavaScriptFunction() {
-            @Override
-            public void call(JsonArray arguments) {
-                if (Idle.this.listener != null) {
-                    Idle.this.listener.userInactive();
-                }
-            }
-        });
-        addFunction("onUserActive", new JavaScriptFunction() {
-            @Override
-            public void call(JsonArray arguments) {
-                if (Idle.this.listener != null) {
-                    Idle.this.listener.userActive();
-                }
-            }
-        });
-        setListener(listener);
+    protected Idle(UI ui, long timeoutMs) throws IllegalArgumentException {
+        this(ui);
         setTimeout(timeoutMs);
+    }
+    
+    /**
+     * Checks if the given UI is already monitored by Idle.
+     * 
+     * @param ui UI instance to check
+     * @throws IllegalArgumentException If the UI is already monitored by Idle
+     */
+    protected void checkNotTracked(UI ui) throws IllegalArgumentException {
+        if (Idle.get(ui) != null) {
+            throw new IllegalArgumentException(
+                    "This UI is already monitored by Idle");
+        }
     }
 
     /**
@@ -121,7 +240,7 @@ public class Idle extends AbstractJavaScriptExtension {
      * @return Current timeout in milliseconds.
      */
     public long getTimeout() {
-        return getState().timeout;
+        return getState(false).timeout;
     }
 
     /**
@@ -136,32 +255,52 @@ public class Idle extends AbstractJavaScriptExtension {
         getState().timeout = timeout;
     }
 
-    /**
-     * Listener for user inactivity status changes.
-     *
-     * @return Listener instance or null.
-     */
-    public Listener getListener() {
-        return listener;
-    }
-
-    /**
-     * Set a new listener for user inactivity status changes.
-     *
-     * Setting this null avoids server notifications to be sent. This is useful
-     * if only CSS changes are desired.
-     *
-     * @param listener New listener, or null if no server notifications are
-     * needed.
-     */
-    public void setListener(Listener listener) {
-        this.listener = listener;
-        getState().enabled = this.listener != null;
-    }
-
     @Override
     protected IdleState getState() {
         return (IdleState) super.getState();
+    }
+    
+    @Override
+    protected IdleState getState(boolean markAsDirty) {
+        return (IdleState) super.getState(markAsDirty);
+    }
+    
+    /**
+     * Fires an {@link UserActiveEvent}.
+     */
+    protected void fireUserActive() {
+        fireEvent(new UserActiveEvent(this));
+    }
+    
+    /**
+     * Adds the user active listener.
+     * 
+     * @param listener the Listener to be added.
+     * @return A registration object for removing the listener.
+     * @see Registration
+     */
+    public Registration addUserActiveListener(UserActiveListener listener) {
+        return addListener("user-active", UserActiveEvent.class, listener,
+                UserActiveListener.USER_ACTIVE_METHOD);
+    }
+    
+    /**
+     * Fires an {@link UserInactiveEvent}.
+     */
+    protected void fireUserInactive() {
+        fireEvent(new UserInactiveEvent(this));
+    }
+    
+    /**
+     * Adds the user inactive listener.
+     * 
+     * @param listener The Listener to be added.
+     * @return A registration object for removing the listener.
+     * @see Registration
+     */
+    public Registration addUserInactiveListener(UserInactiveListener listener) {
+        return addListener("user-inactive", UserInactiveEvent.class, listener,
+                UserInactiveListener.USER_INACTIVE_METHOD);
     }
     
 }
