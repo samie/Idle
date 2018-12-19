@@ -1,10 +1,24 @@
+/*
+ * Copyright 2017 Sami Ekblad.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.vaadin.addons.idle.demo;
 
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.data.Property;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Alignment;
@@ -27,7 +41,7 @@ import org.vaadin.addons.idle.Idle;
 public class DemoUI extends UI {
     
     // Some test timeouts
-    private final TreeSet<Long> timeouts = new TreeSet<Long>(); {
+    private final TreeSet<Long> timeouts = new TreeSet<>(); {
         timeouts.add(3000L); // 3 seconds
         timeouts.add(10000L); // 10 seconds
         timeouts.add(30000L); // 30 seconds
@@ -46,7 +60,6 @@ public class DemoUI extends UI {
     @Override
     protected void init(VaadinRequest request) {
         
-        
         VerticalLayout wrapperLayout = new VerticalLayout();
         wrapperLayout.setSizeUndefined();
         wrapperLayout.setSpacing(true);
@@ -59,49 +72,33 @@ public class DemoUI extends UI {
         wrapperLayout.setComponentAlignment(status, Alignment.MIDDLE_CENTER);
 
         // Initialize our new UI component
-        final Idle idle = Idle.track(this, 5000, new Idle.Listener() {
-
-            @Override
-            public void userInactive() {
-                status.setValue("You are now idle");
-            }
-
-            @Override
-            public void userActive() {
-                status.setValue("You are now active");
-            }
-        });
+        Idle idle = Idle.track(this, 5000);
+        idle.addUserActiveListener(e -> status.setValue("You are now active"));
+        idle.addUserInactiveListener(e -> status.setValue("You are now idle"));
         timeouts.add(idle.getTimeout());
         
         // Combobox to change the inactivity timeout
-        final ComboBox timeoutComboBox = new ComboBox(
+        ComboBox<Long> timeoutComboBox = new ComboBox<>(
                 "Inactivity timeout:", timeouts);
         timeoutComboBox.setWidth(250, Unit.PIXELS);
         timeoutComboBox.setValue(idle.getTimeout());
-        timeoutComboBox.setNullSelectionAllowed(false);
-        timeoutComboBox.addValueChangeListener(
-                new Property.ValueChangeListener() {
-
-            @Override
-            public void valueChange(Property.ValueChangeEvent event) {
-                Long timeout = (Long) timeoutComboBox.getValue();
-                Notification.show("Inactivity timeout is now set to:\n" + 
-                            timeout + " ms!", "", 
-                            Notification.Type.TRAY_NOTIFICATION);
-                idle.setTimeout(timeout);
-            }
+        timeoutComboBox.setEmptySelectionAllowed(false);
+        timeoutComboBox.addValueChangeListener(e -> {
+            Long timeout = e.getValue();
+            Notification.show("Inactivity timeout is now set to:\n" + 
+                        timeout + " ms!", "", 
+                        Notification.Type.TRAY_NOTIFICATION);
+            idle.setTimeout(timeout);
         });
         
-        for (Long timeout : timeouts) {
-            timeoutComboBox.setItemCaption(timeout, timeout + " ms");
-        }
+        timeoutComboBox.setItemCaptionGenerator(timeout -> timeout + " ms");
         
         wrapperLayout.addComponent(timeoutComboBox);
         wrapperLayout.setComponentAlignment(
                 timeoutComboBox, Alignment.MIDDLE_CENTER);
         
         // Show it in the middle of the screen
-        final VerticalLayout layout = new VerticalLayout();
+        VerticalLayout layout = new VerticalLayout();
         layout.setSizeFull();
         layout.addComponent(wrapperLayout);
         layout.setComponentAlignment(wrapperLayout, Alignment.MIDDLE_CENTER);
