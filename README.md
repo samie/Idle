@@ -24,7 +24,8 @@ In the demo you can see CSS color changes applied immediately and text chenged o
 
 ## Issue tracking
 
-The issues for this add-on are tracked on its github.com page. All bug reports and feature requests are appreciated. 
+The issues for this add-on are tracked on [github.com issues page](https://github.com/samie/Idle/issues). All bug reports and feature 
+requests are appreciated. 
 
 ## Contributions
 
