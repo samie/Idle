@@ -27,3 +27,8 @@ frontend
 Idle/tsconfig.json
 Idle/types.d.ts
 Idle/package.json
+Idle-demo/package.json
+Idle-demo/tsconfig.json
+Idle-demo/types.d.ts
+Idle-demo/vite.config.ts
+Idle-demo/vite.generated.ts
