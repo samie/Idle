@@ -18,3 +18,12 @@ Idle-demo/src/main/webapp/VAADIN/themes/demo/styles.css
 hs_err_pid*
 /Idle/phantomjsdriver.log
 /Idle-demo/src/main/webapp/VAADIN/themes/demo/addons.scss
+Idle/frontend/generated
+Idle/frontend
+Idle/frontend
+Idle/vite.generated.ts
+Idle/vite.config.ts
+frontend
+Idle/tsconfig.json
+Idle/types.d.ts
+Idle/package.json

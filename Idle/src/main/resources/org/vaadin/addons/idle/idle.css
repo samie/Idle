@@ -1,0 +1,12 @@
+
+/* Body styles when user is active. */
+body.useractive {
+   background-color: var(--lumo-background-color, white);
+   transition: background-color 0.25s linear;
+}
+
+/* Body styles when user is inactive. */
+body.userinactive {
+   background-color: var(--lumo-contrast-30pct, gray);
+   transition: background-color 0.75s linear;
+}
