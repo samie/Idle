@@ -147,7 +147,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>3.2.1</version>
+            <version>3.2.2</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -159,8 +159,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>3.2.1</version>
+            <version>3.2.2</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- 2.9.0 is needed to mitigate CVE-2023-51074 -->
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.9.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -191,10 +197,16 @@
             <version>6.0.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
-        <defaultGoal>jetty:run</defaultGoal>
+        <defaultGoal>install:install</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -216,21 +228,6 @@
                     <excludes>
                         <exclude>META-INF/VAADIN/config/flow-build-info.json</exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>11.0.14</version>
-                <configuration>
-                    <scan>-1</scan>
-                    <!-- Use test scope because the UI/test classes are in
-                        the test package. -->
-                    <useTestScope>true</useTestScope>
-                    <supportedPackagings>
-                        <supportedPackaging>jar</supportedPackaging>
-                    </supportedPackagings>
                 </configuration>
             </plugin>
 
@@ -360,37 +357,6 @@
             <id>it</id>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.eclipse.jetty</groupId>
-                        <artifactId>jetty-maven-plugin</artifactId>
-                        <configuration>
-                            <scan>0</scan>
-                            <stopPort>8081</stopPort>
-                            <useTestScope>true</useTestScope>
-                            <supportedPackagings>
-                                <supportedPackaging>jar</supportedPackaging>
-                            </supportedPackagings>
-                            <stopWait>15</stopWait>
-                            <stopKey>${project.artifactId}</stopKey>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>start-jetty</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>start</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>stop-jetty</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>

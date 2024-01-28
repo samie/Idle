@@ -15,38 +15,43 @@
  */
 package org.vaadin.addons.idle.automated;
 
-import org.openqa.selenium.*;
-import org.openqa.selenium.support.FindBy;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
 
-/**
+/** Page pattern for the IdleDemo.
  *
  * @author Max Schuster
  */
 public class IdleDemoPage {
-    
-    private final WebDriver driver;
-    
-    @FindBy(id = "status")
-    private WebElement status;
-    
-    @FindBy(tagName = "body")
-    private WebElement body;
 
-    public IdleDemoPage(WebDriver driver) {
-        this.driver = driver;
+    private Page page;
+
+    public IdleDemoPage(Page page) {
+        this.page = page;
     }
-    
+
+    public IdleDemoPage(Playwright playwright, String url) {
+        Browser browser = playwright.chromium().launch();
+        Page p = browser.newPage();
+        p.navigate(url);
+        page = p;
+    }
+
     public String getStatusText() {
-        return status.getText();
+        return page.getByTitle("status").innerText();
     }
     
     public String getBodyClass() {
-        return body.getAttribute("class");
+        return page.locator("body").getAttribute("class");
     }
     
     public IdleDemoPage clickBody() {
-        body.click();
+        page.locator("body").click();
         return this;
     }
-    
+
+    public void inactiveFor(int ms) {
+        page.waitForTimeout(ms);
+    }
 }

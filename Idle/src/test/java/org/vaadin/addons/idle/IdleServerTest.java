@@ -16,27 +16,21 @@
 
 package org.vaadin.addons.idle;
 
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.ui.UI;
+import com.vaadin.flow.component.UI;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class IdleServerTest {
     
     private UI testUI;
     
-    @Before
+    @BeforeEach
     public void before() {
-        testUI = new UI() {
-            @Override
-            protected void init(VaadinRequest request) {
-                
-            }
-        };
+        testUI = new UI();
     }
-    
+
     @Test
     public void testTrack() {
         Assert.assertNotNull(Idle.track(testUI));
@@ -48,10 +42,12 @@ public class IdleServerTest {
         Assert.assertEquals(idle, Idle.get(testUI));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test()
     public void testDoubleTracking() {
         Idle.track(testUI);
-        Idle.track(testUI);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            Idle.track(testUI);
+        });
     }
     
 }

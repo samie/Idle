@@ -15,59 +15,52 @@
  */
 package org.vaadin.addons.idle.automated;
 
-import com.github.webdriverextensions.WebDriverExtensionsContext;
-import com.github.webdriverextensions.junitrunner.WebDriverRunner;
-import com.github.webdriverextensions.junitrunner.annotations.PhantomJS;
-import com.github.webdriverextensions.vaadin.VaadinBot;
+import com.microsoft.playwright.*;
+
 import java.net.MalformedURLException;
-import java.net.URL;
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openqa.selenium.support.PageFactory;
-import org.vaadin.addonhelpers.automated.AbstractWebDriverCase;
-import org.vaadin.addons.idle.manual.demo.IdleDemo;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 
 /**
  *
- * @author Max Schuster
+ * @author Sami Ekblad
  */
-@RunWith(WebDriverRunner.class)
-@PhantomJS
-public class TestIdleDemo extends AbstractWebDriverCase {
-    
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class TestIdleDemo  {
+
+    @LocalServerPort
+    private int port; // Use the random HTTP port assigned to test
+
+    static Playwright playwright = Playwright.create();
     IdleDemoPage page;
-    
-    @Before
+
+    @BeforeEach
     public void setup() throws MalformedURLException {
-        startBrowser(WebDriverExtensionsContext.getDriver());
-        driver.navigate().to(
-                new URL("http://localhost:5678/") + IdleDemo.class.getName());
-        VaadinBot.waitForVaadin();
-        page = PageFactory.initElements(driver, IdleDemoPage.class);
-        clickNotification();
+        page = new IdleDemoPage(playwright,"http://localhost:" + port + "/test");
     }
     
     private void becomeInactive() {
-        sleep(3500);
+        page.inactiveFor(2500);
     }
     
     @Test
     public void testEventListenersBodyClass() {
+
         // Check initial state
-        Assert.assertThat(page.getStatusText(), CoreMatchers.is("User active"));
-        Assert.assertThat(page.getBodyClass(), CoreMatchers.containsString("useractive"));
-        
+        Assertions.assertEquals("Server-side state: User active", page.getStatusText());
+        Assertions.assertEquals("useractive",page.getBodyClass());
+
         becomeInactive();
-        Assert.assertThat(page.getStatusText(), CoreMatchers.is("User inactive"));
-        Assert.assertThat(page.getBodyClass(), CoreMatchers.containsString("userinactive"));
-        
+        Assertions.assertEquals("Server-side state: User inactive", page.getStatusText());
+        Assertions.assertEquals("userinactive",page.getBodyClass());
+
         // becoming active again
         page.clickBody();
-        Assert.assertThat(page.getStatusText(), CoreMatchers.is("User active"));
-        Assert.assertThat(page.getBodyClass(), CoreMatchers.containsString("useractive"));
+        Assertions.assertEquals("Server-side state: User active", page.getStatusText());
+        Assertions.assertEquals("useractive",page.getBodyClass());
     }
-    
 }
