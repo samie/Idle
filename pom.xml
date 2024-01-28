@@ -5,7 +5,7 @@
 
     <groupId>org.vaadin.addon</groupId>
     <artifactId>idle-root</artifactId>
-    <version>3.0.0</version>
+    <version>3.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Idle - Root Project</name>
 
