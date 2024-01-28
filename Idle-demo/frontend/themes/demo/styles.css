@@ -1,0 +1,23 @@
+
+/* Body styles when user is active. */
+body.useractive {
+  box-shadow: inset 0 0 10px 10px rgba(0, 255, 0, 0.5);
+  transition: box-shadow 0.25s linear;
+}
+
+body.useractive .status {
+  color: green;
+  transition: color 0.25s linear;
+}
+
+/* Body styles when user is inactive. */
+body.userinactive {
+  box-shadow: inset 0 0 20px 20px rgba(150, 150, 150, 0.5);
+  background: inherit;
+  transition: box-shadow 0.75s linear;
+}
+
+body.userinactive .status {
+  color: red;
+  transition: color 0.25s linear;
+}
