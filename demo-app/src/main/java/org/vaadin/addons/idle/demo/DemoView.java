@@ -31,7 +31,7 @@ import org.vaadin.addons.idle.Idle;
 import java.util.TreeSet;
 
 @PreserveOnRefresh
-@Route
+@Route("")
 @PageTitle("Idle Add-on Demo")
 public class DemoView extends Div {
     
