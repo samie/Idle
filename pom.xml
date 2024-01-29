@@ -43,8 +43,8 @@
     </licenses>
 
     <modules>
-        <module>Idle</module>
-        <module>Idle-demo</module>
+        <module>addon</module>
+        <module>demo-app</module>
     </modules>
 
 </project>

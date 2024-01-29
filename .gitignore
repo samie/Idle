@@ -8,25 +8,25 @@
 *.war
 *.ear
 
-Idle/target/
-Idle/drivers/
-Idle-demo/target/
-Idle-demo/src/main/webapp/META-INF/
-Idle-demo/src/main/webapp/VAADIN/themes/demo/styles.css
+addon/target/
+addon/drivers/
+demo-app/target/
+demo-app/src/main/webapp/META-INF/
+demo-app/src/main/webapp/VAADIN/themes/demo/styles.css
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-Idle/frontend/generated
-Idle/frontend
-Idle/vite.generated.ts
-Idle/vite.config.ts
-Idle/tsconfig.json
-Idle/types.d.ts
-Idle/package.json
-Idle-demo/package.json
-Idle-demo/tsconfig.json
-Idle-demo/types.d.ts
-Idle-demo/vite.config.ts
-Idle-demo/vite.generated.ts
-Idle-demo/frontend/generated
-Idle-demo/frontend/index.html
+addon/frontend/generated
+addon/frontend
+addon/vite.generated.ts
+addon/vite.config.ts
+addon/tsconfig.json
+addon/types.d.ts
+addon/package.json
+demo-app/package.json
+demo-app/tsconfig.json
+demo-app/types.d.ts
+demo-app/vite.config.ts
+demo-app/vite.generated.ts
+demo-app/frontend/generated
+demo-app/frontend/index.html
