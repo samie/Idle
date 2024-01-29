@@ -1,8 +1,10 @@
-app = "idle-demo"
-primary_region = "fra"
+# fly.toml app configuration file generated for idle-demo on 2024-01-29T20:58:49Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-[env]
-PORT = "8080"
+app = 'idle-demo'
+primary_region = 'arn'
 
 [http_service]
 internal_port = 8080
