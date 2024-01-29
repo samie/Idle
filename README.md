@@ -3,23 +3,27 @@
 
 # Idle - User inactivity tracking for Vaadin
 
-With *Idle* you can monitor, if user is active or inactive in your application. 
+With *Idle*, you can monitor whether a user is active or inactive in your application. 
 
-This is done by tracking keyboard and mouse events in window. 
-You can specify an inactivity time after which the BODY element is applied 
-`userinactive` style. Also a optionally event to server-side component is sent.
+This is achieved by tracking keyboard and mouse events within the window. You can set a specified inactivity time, after which the `userinactive` style is applied to the `BODY` element. Additionally, an optional event can be sent to the server-side component.
 
 ## Online demo
 
-Try the add-on demo at http://sami.app.fi/idle
+Try the add-on demo at [idle-demo.fly.dev](https://idle-demo.fly.dev)
 
-In the demo you can see CSS color changes applied immediately and text chenged on Listener.
+In the demo you can see CSS color changes applied immediately and text changed on server-side listeners.
 
 ## Release notes
 
 ### Version 1.0
 - Apply CSS changes based on user inactivity
 - Server-side listener for idle/resume
+
+### Version 2.0
+- Add support for Java 8 lambdas and Vaadin 8
+
+### Version 3.0
+- Add support for Vaadin 24
 
 
 ## Issue tracking
