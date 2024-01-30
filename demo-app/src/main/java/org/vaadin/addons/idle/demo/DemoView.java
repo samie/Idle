@@ -37,6 +37,7 @@ public class DemoView extends Div {
     
     // Some test timeouts
     private final TreeSet<Long> timeouts = new TreeSet<>(); {
+        timeouts.add(1000L); // 1 seconds
         timeouts.add(3000L); // 3 seconds
         timeouts.add(10000L); // 10 seconds
         timeouts.add(30000L); // 30 seconds
