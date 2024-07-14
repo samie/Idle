@@ -61,6 +61,7 @@ public class Idle {
     private final List<UserActiveListener> activeListeners = new CopyOnWriteArrayList<>();
     private final WeakReference<UI> ui;
     private long timeout;
+    private boolean updateCssClass;
     private DomListenerRegistration activeDomListener;
     private DomListenerRegistration inactiveDomListener;
     private final String jsSingletonName;
@@ -99,6 +100,20 @@ public class Idle {
     }
 
     /**
+     * Creates a new Idle instance.
+     *
+     * @param ui        UI instance to monitor
+     * @param timeoutMs Inactivity timeout in milliseconds
+     * @param updateCssClass CSS styles are updated when user becomes active/inactive.
+     * @throws IllegalArgumentException If the UI is already monitored by Idle
+     */
+    public Idle(UI ui, long timeoutMs, boolean updateCssClass) throws IllegalArgumentException {
+        this(ui);
+        setTimeout(timeoutMs);
+        setUpdateCss(updateCssClass);
+    }
+
+    /**
      * Gets the Idle instance a monitored UI.
      *
      * @param ui A monitored UI instance
@@ -134,6 +149,21 @@ public class Idle {
             throws IllegalArgumentException {
         assert ui != null;
         return new Idle(ui, timeoutMs);
+    }
+
+    /**
+     * Create new user activity tracker for UI with timeout.
+     *
+     * @param ui        UI instance to monitor
+     * @param timeoutMs Inactivity timeout in milliseconds
+     * @param updateCssClass CSS styles are updated when user becomes active/inactive.
+     * @return Idle Created instance
+     * @throws IllegalArgumentException If the UI is already monitored by Idle
+     */
+    public static Idle track(UI ui, long timeoutMs, boolean updateCssClass)
+            throws IllegalArgumentException {
+        assert ui != null;
+        return new Idle(ui, timeoutMs,updateCssClass);
     }
 
     /** This is an internal method for tracking the UI.
@@ -192,6 +222,24 @@ public class Idle {
     public void setTimeout(long timeout) {
         this.timeout = timeout >= 0 ? timeout: 0;
         callInstanceMethod("setTimeout(%d)".formatted(this.timeout));
+    }
+
+    /** Do we apply css class when user becomes active/inactive.
+     *
+     * @return If true, the CSS styles are updated when user becomes active/inactive.
+     */
+    public boolean isUpdateCss() {
+        return updateCssClass;
+    }
+
+    /**
+     * Apply css class to body when user becomes active/inactive.
+     *
+     * @param updateCssClass If true, the CSS styles are updated when user becomes
+     */
+    public void setUpdateCss(boolean updateCssClass) {
+        this.updateCssClass = updateCssClass;
+        callInstanceMethod("setUpdateCssClass(%b)".formatted(this.updateCssClass));
     }
 
     /**

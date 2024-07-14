@@ -20,6 +20,7 @@ class org_vaadin_addons_idle_Idle {
   tracking = false;
   timerId = null;
   timeout = 5000;
+  updateCssClass = true;
 
   constructor() {
   }
@@ -34,8 +35,12 @@ class org_vaadin_addons_idle_Idle {
     }
 
     // Send 'active' event and change CSS class (only if inactive)
-    if (document.body.classList.contains("userinactive") && this.tracking) {
-          document.body.classList.replace("userinactive", "useractive");
+    if (document.body.getAttribute("idle") == "userinactive" && this.tracking) {
+          document.body.setAttribute("idle","useractive");
+          if (this.updateCssClass) {
+            document.body.classList.remove("userinactive")
+            document.body.classList.add("useractive");
+          }
           const event = new Event("user-active");
           document.body.dispatchEvent(event);
     }
@@ -43,8 +48,12 @@ class org_vaadin_addons_idle_Idle {
 
     this.timerId = setTimeout(() => {
       // Timer expired. Send 'inactive' event and change CSS class
-      if (!document.body.classList.contains("userinactive") && this.tracking) {
-          document.body.classList.replace("useractive", "userinactive");
+      if (document.body.getAttribute("idle") == "useractive" && this.tracking) {
+          document.body.setAttribute("idle","userinactive");
+          if (this.updateCssClass) {
+            document.body.classList.remove("useractive")
+            document.body.classList.add("userinactive");
+          }
           const event = new Event("user-inactive");
           document.body.dispatchEvent(event);
       }
@@ -55,7 +64,10 @@ class org_vaadin_addons_idle_Idle {
   /** Register event listeners */
   register() {
     if (this.tracking) return; // Avoid registering twice
-    document.body.classList.toggle("useractive", true);
+    document.body.setAttribute("idle","useractive");
+    if (this.updateCssClass) {
+        document.body.classList.toggle("useractive", true);
+    }
     window.addEventListener('mousedown', this.timerReset.bind(this), false);
     window.addEventListener('mousemove', this.timerReset.bind(this), false);
     window.addEventListener('keydown', this.timerReset.bind(this), false);
@@ -66,6 +78,7 @@ class org_vaadin_addons_idle_Idle {
   /** Unregister event listeners */
   unregister() {
     this.tracking = false;
+    document.body.removeAttribute("idle");
     window.removeEventListener('mousedown', this.timerReset, false);
     window.removeEventListener('mousemove', this.timerReset, false);
     window.removeEventListener('keydown', this.timerReset, false);
@@ -75,11 +88,26 @@ class org_vaadin_addons_idle_Idle {
 
   /** Reset timer if timeout has changed. */
   setTimeout(newTimeout) {
-    document.body.classList.add("useractive");
+    document.body.setAttribute("idle","useractive");
+    if (this.updateCssClass) {
+      document.body.classList.add("useractive");
+    }
 
     if (newTimeout !== this.timeout) {
       this.timeout = newTimeout;
       this.timerReset();
+    }
+  }
+
+  isUpdateCssClass() {
+    return this.updateCssClass;
+  }
+
+  setUpdateCssClass(updateCssClass) {
+    this.updateCssClass = updateCssClass;
+    if (!updateCssClass) {
+      document.body.classList.remove("useractive");
+      document.body.classList.remove("userinactive");
     }
   }
 }
