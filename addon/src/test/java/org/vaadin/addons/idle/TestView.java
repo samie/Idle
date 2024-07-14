@@ -31,9 +31,14 @@ public class TestView extends VerticalLayout {
             timeout.setText("Timeout "+ newTimeout +"ms");
         });
 
+        Button disableCss = new Button("Disable CSS classes", (e) -> {
+            idle.setUpdateCss(e.getSource().getText().contains("Enable"));
+            e.getSource().setText(idle.isUpdateCss()? "Disable CSS": "Enable CSS");
+        });
+
         // For testing purposes
         status.setTitle("status");
 
-        add(status, timeout, enable, disable, update);
+        add(status, timeout, enable, disable, update, disableCss);
     }
 }
