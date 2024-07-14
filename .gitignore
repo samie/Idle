@@ -30,3 +30,5 @@ demo-app/vite.config.ts
 demo-app/vite.generated.ts
 demo-app/frontend/generated
 demo-app/frontend/index.html
+frontend/generated
+frontend/index.html
