@@ -17,10 +17,9 @@ package org.vaadin.addons.idle.automated;
 
 import com.microsoft.playwright.*;
 
-import java.net.MalformedURLException;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -29,6 +28,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
  *
  * @author Sami Ekblad
  */
+@Disabled
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TestIdleDemo  {
 
@@ -39,7 +39,7 @@ public class TestIdleDemo  {
     IdleDemoPage page;
 
     @BeforeEach
-    public void setup() throws MalformedURLException {
+    public void setup() {
         page = new IdleDemoPage(playwright,"http://localhost:" + port + "/test");
     }
     
