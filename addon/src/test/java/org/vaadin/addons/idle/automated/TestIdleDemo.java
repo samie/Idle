@@ -17,8 +17,6 @@ package org.vaadin.addons.idle.automated;
 
 import com.microsoft.playwright.*;
 
-import java.net.MalformedURLException;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;

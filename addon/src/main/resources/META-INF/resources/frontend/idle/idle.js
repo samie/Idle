@@ -35,7 +35,7 @@ class org_vaadin_addons_idle_Idle {
     }
 
     // Send 'active' event and change CSS class (only if inactive)
-    if (document.body.getAttribute("idle") == "userinactive" && this.tracking) {
+    if (document.body.getAttribute("idle") === "userinactive" && this.tracking) {
           document.body.setAttribute("idle","useractive");
           if (this.updateCssClass) {
             document.body.classList.remove("userinactive")
@@ -48,7 +48,7 @@ class org_vaadin_addons_idle_Idle {
 
     this.timerId = setTimeout(() => {
       // Timer expired. Send 'inactive' event and change CSS class
-      if (document.body.getAttribute("idle") == "useractive" && this.tracking) {
+      if (document.body.getAttribute("idle") === "useractive" && this.tracking) {
           document.body.setAttribute("idle","userinactive");
           if (this.updateCssClass) {
             document.body.classList.remove("useractive")
