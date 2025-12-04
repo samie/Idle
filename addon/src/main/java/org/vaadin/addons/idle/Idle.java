@@ -16,9 +16,10 @@
 package org.vaadin.addons.idle;
 
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.dom.DomListenerRegistration;
 import com.vaadin.flow.shared.Registration;
-import org.parttio.vaadinjsloader.JSLoader;
 
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
@@ -27,8 +28,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.WeakHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-;
 
 /**
  * Vaadin extension for tracking user activity / inactivity.
@@ -53,6 +52,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author Sami Ekblad
  */
+@JsModule("./idle/idle.js")
+@StyleSheet("idle/idle.css")
 public class Idle {
 
     private static final WeakHashMap<UI, Idle> UI_REGISTRATIONS = new WeakHashMap<>();
@@ -77,7 +78,7 @@ public class Idle {
         checkNotTracked(ui);
 
         // Load the JS and CSS
-        JSLoader.loadJavaResource(ui, Idle.class, "idle-addon","idle.js", "idle.css");
+//        JSLoader.loadJavaResource(ui, Idle.class, "idle-addon","idle.js", "idle.css");
 
         // The loaded script creates a single JS instance in window, with unique name instance name
         jsSingletonName = "window." + Idle.class.getCanonicalName().replace('.', '_') + "_instance";

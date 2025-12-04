@@ -6,21 +6,19 @@
     <groupId>org.vaadin.addon</groupId>
     <artifactId>idle-demo</artifactId>
     <name>Idle - Demo</name>
-    <version>3.1-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <vaadin.version>24.3.3</vaadin.version>
+        <java.version>21</java.version>
+        <maven.compiler.release>21</maven.compiler.release>
+        <vaadin.version>25.0.0-beta8</vaadin.version>
     </properties>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.2</version>
-        <relativePath></relativePath>
+        <version>4.0.0</version>
     </parent>
 
     <repositories>
@@ -52,6 +50,10 @@
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-dev</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
             <artifactId>vaadin-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
@@ -77,7 +79,7 @@
         <dependency>
             <groupId>org.vaadin.addon</groupId>
             <artifactId>idle</artifactId>
-            <version>3.0.0</version>
+            <version>4.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

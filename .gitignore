@@ -32,3 +32,10 @@ demo-app/frontend/generated
 demo-app/frontend/index.html
 frontend/generated
 frontend/index.html
+addon/node_modules/
+/.idea/
+/addon/src/main/frontend/generated/
+/addon/src/main/frontend/index.html
+/demo-app/src/main/bundles/dev.bundle
+/addon/package-lock.json
+/demo-app/src/main/bundles/README.md
